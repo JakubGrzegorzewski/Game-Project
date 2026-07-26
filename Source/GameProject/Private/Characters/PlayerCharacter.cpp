@@ -3,6 +3,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Camera/CameraComponent.h"
+#include "Components/AbilityComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
 APlayerCharacter::APlayerCharacter(){
@@ -86,11 +87,19 @@ void APlayerCharacter::InteractHandler(){
 }
 
 void APlayerCharacter::PrimaryActionHandler(){
-
+	if (!CurrentAbility) return;
+	GetAbilityComponent()->TryUseAbility(CurrentAbility->AbilityTag, this);
 }
 
 void APlayerCharacter::SecondaryActionHandler(){
-
+	int32 INT32 = GetAbilityComponent()->GrantedAbilities.Find(CurrentAbility);
+	if (TObjectPtr<UAbilityDefinition> AbilityDefinition = GetAbilityComponent()->GrantedAbilities[INT32+1])
+	{
+		CurrentAbility = AbilityDefinition;
+	}
+	else
+	{
+		CurrentAbility = GetAbilityComponent()->GrantedAbilities[0];
+	}
+	
 }
-
-

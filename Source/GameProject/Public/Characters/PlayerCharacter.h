@@ -5,6 +5,7 @@
 #include "InputActionValue.h"
 #include "PlayerCharacter.generated.h"
 
+class UAbilityDefinition;
 class UCameraComponent;
 class USpringArmComponent;
 class UInputMappingContext;
@@ -30,9 +31,12 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Camera")
 	TObjectPtr<USpringArmComponent> SpringArmComponent;
 	
-	// Input System
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+private:
+	UPROPERTY()
+	TObjectPtr<UAbilityDefinition> CurrentAbility;
 	
+public:
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
 protected:
 	

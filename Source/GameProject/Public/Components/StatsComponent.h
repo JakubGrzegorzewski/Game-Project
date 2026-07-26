@@ -28,12 +28,15 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "Stats")
 	float GetStatValue(UPARAM(meta=(Categories="Stats")) FGameplayTag StatTag) const;
-	
+
 	UFUNCTION(BlueprintCallable, Category = "Stats")
 	bool AddNewStat(UPARAM(meta=(Categories="Stats")) FGameplayTag StatTag, FStatsStruct NewStat);
-	
+
 	TMap<FGameplayTag, FStatsStruct> GetStats() const;
-	
+
 	UPROPERTY(BlueprintAssignable, Category = "Stats")
 	FOnStatChanged OnStatChanged;
+
+protected:
+	virtual void BeginPlay() override;
 };

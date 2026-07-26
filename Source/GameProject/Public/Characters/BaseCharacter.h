@@ -5,6 +5,8 @@
 #include "BaseCharacter.generated.h"
 
 class UStatsComponent;
+class UAbilityComponent;
+class UStatusEffectComponent;
 class UCharacterAttributeSet;
 
 UCLASS()
@@ -13,12 +15,19 @@ class GAMEPROJECT_API ABaseCharacter : public ACharacter
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
 	ABaseCharacter();
-	
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UStatsComponent* StatsComponent;
 	UStatsComponent* GetStatsComponent() const { return StatsComponent; }
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UAbilityComponent* AbilityComponent;
+	UAbilityComponent* GetAbilityComponent() const { return AbilityComponent; }
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UStatusEffectComponent* StatusEffectComponent;
+	UStatusEffectComponent* GetStatusEffectComponent() const { return StatusEffectComponent; }
 
 protected:
 	virtual void BeginPlay() override;
@@ -26,5 +35,5 @@ protected:
 public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	
+
 };
