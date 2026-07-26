@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class CANDIDATE_API AProjectGameMode : public AGameMode
+class GAMEPROJECT_API AProjectGameMode : public AGameMode
 {
 	GENERATED_BODY()
 	

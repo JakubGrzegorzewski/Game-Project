@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class CANDIDATE_API AProjectGameState : public AGameState
+class GAMEPROJECT_API AProjectGameState : public AGameState
 {
 	GENERATED_BODY()
 };

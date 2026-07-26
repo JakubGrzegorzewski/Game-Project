@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class CANDIDATE_API UProjectGameInstance : public UGameInstance
+class GAMEPROJECT_API UProjectGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
 };

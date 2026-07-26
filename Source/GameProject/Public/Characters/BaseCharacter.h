@@ -7,7 +7,7 @@
 class UCharacterAttributeSet;
 
 UCLASS()
-class CANDIDATE_API ABaseCharacter : public ACharacter
+class GAMEPROJECT_API ABaseCharacter : public ACharacter
 {
 	GENERATED_BODY()
 

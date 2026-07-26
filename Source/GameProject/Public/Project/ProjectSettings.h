@@ -11,7 +11,7 @@ class UCommonActivatableWidget;
  * 
  */
 UCLASS(Config = Game, defaultconfig, meta = (DisplayName = "Project Gameplay Settings"))
-class CANDIDATE_API UProjectSettings : public UDeveloperSettings
+class GAMEPROJECT_API UProjectSettings : public UDeveloperSettings
 {
 	GENERATED_BODY()
 	
