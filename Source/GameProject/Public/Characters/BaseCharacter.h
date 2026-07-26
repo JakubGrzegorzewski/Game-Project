@@ -4,6 +4,7 @@
 #include "GameFramework/Character.h"
 #include "BaseCharacter.generated.h"
 
+class UStatsComponent;
 class UCharacterAttributeSet;
 
 UCLASS()
@@ -14,6 +15,10 @@ class GAMEPROJECT_API ABaseCharacter : public ACharacter
 public:
 	// Sets default values for this character's properties
 	ABaseCharacter();
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UStatsComponent* StatsComponent;
+	UStatsComponent* GetStatsComponent() const { return StatsComponent; }
 
 protected:
 	virtual void BeginPlay() override;

@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class CANDIDATE_API ABasePlayerController : public APlayerController
+class GAMEPROJECT_API ABasePlayerController : public APlayerController
 {
 	GENERATED_BODY()
 };

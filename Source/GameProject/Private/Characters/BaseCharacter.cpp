@@ -1,11 +1,12 @@
 #include "GameProject/Public/Characters/BaseCharacter.h"
 
-
+#include "Components/StatsComponent.h"
 
 
 ABaseCharacter::ABaseCharacter(){
 	PrimaryActorTick.bCanEverTick = true;
-
+	
+	StatsComponent = CreateDefaultSubobject<UStatsComponent>(TEXT("StatsComponent"));
 }
 
 void ABaseCharacter::BeginPlay(){
