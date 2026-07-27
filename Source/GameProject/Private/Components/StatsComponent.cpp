@@ -34,6 +34,20 @@ void UStatsComponent::UpdateStat(const FGameplayTag StatTag, float NewValue){
 	}
 }
 
+float UStatsComponent::ModifyStat(const FGameplayTag StatTag, float Delta){
+	if (!StatTag.IsValid() || !Stats.Contains(StatTag)) {
+		UE_LOG(LogTemp, Warning, TEXT("StatTag is invalid or not found in Stats."));
+		return 0.0f;
+	}
+
+	FStatsStruct& Stat = Stats[StatTag];
+	const float NewValue = FMath::Clamp(Stat.CurrentValue + Delta, Stat.MinValue, Stat.MaxValue);
+	Stat.CurrentValue = NewValue;
+	OnStatChanged.Broadcast(StatTag, NewValue);
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, FString::Printf(TEXT("Stat changed: %s, Value: %f"), *StatTag.ToString(), NewValue));
+	return NewValue;
+}
+
 float UStatsComponent::GetStatValue(const FGameplayTag StatTag) const{
 	if (StatTag.IsValid() && Stats.Contains(StatTag)) {
 		return Stats[StatTag].CurrentValue;
