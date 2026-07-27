@@ -87,19 +87,28 @@ void APlayerCharacter::InteractHandler(){
 }
 
 void APlayerCharacter::PrimaryActionHandler(){
+	if (!CurrentAbility && !GetAbilityComponent()->GrantedAbilities.IsEmpty())
+		CurrentAbility = GetAbilityComponent()->GrantedAbilities[0];
+	
 	if (!CurrentAbility) return;
+	
 	GetAbilityComponent()->TryUseAbility(CurrentAbility->AbilityTag, this);
 }
 
 void APlayerCharacter::SecondaryActionHandler(){
-	int32 INT32 = GetAbilityComponent()->GrantedAbilities.Find(CurrentAbility);
-	if (TObjectPtr<UAbilityDefinition> AbilityDefinition = GetAbilityComponent()->GrantedAbilities[INT32+1])
-	{
-		CurrentAbility = AbilityDefinition;
+	UAbilityComponent* AbilityComp = GetAbilityComponent();
+	if (!AbilityComp || AbilityComp->GrantedAbilities.IsEmpty())
+		return;
+	
+
+	TArray<TObjectPtr<UAbilityDefinition>> Granted = AbilityComp->GrantedAbilities;
+	const int32 Index = Granted.Find(CurrentAbility);
+
+	if (Index == INDEX_NONE){
+		CurrentAbility = Granted[0];
+		return;
 	}
-	else
-	{
-		CurrentAbility = GetAbilityComponent()->GrantedAbilities[0];
-	}
+
+	CurrentAbility = Granted[(Index + 1) % Granted.Num()];
 	
 }
