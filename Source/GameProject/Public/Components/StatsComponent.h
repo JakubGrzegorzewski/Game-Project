@@ -29,9 +29,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Stats")
 	float ModifyStat(UPARAM(meta=(Categories="Stats")) FGameplayTag StatTag, float Delta);
 
-	UFUNCTION(BlueprintCallable, Category = "Stats")
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Stats")
 	float GetStatValue(UPARAM(meta=(Categories="Stats")) FGameplayTag StatTag) const;
 
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Stats")
+	void GetStatByTag(UPARAM(meta=(Categories="Stats")) FGameplayTag StatTag, FStatsStruct& OutStat) const;
+	
 	UFUNCTION(BlueprintCallable, Category = "Stats")
 	bool AddNewStat(UPARAM(meta=(Categories="Stats")) FGameplayTag StatTag, FStatsStruct NewStat);
 

@@ -20,6 +20,9 @@ APlayerCharacter::APlayerCharacter(){
 
 void APlayerCharacter::BeginPlay(){
 	Super::BeginPlay();
+	if (!CurrentAbility && !GetAbilityComponent()->GrantedAbilities.IsEmpty()){
+		SetCurrentAbility(GetAbilityComponent()->GrantedAbilities[0]);
+	}
 }
 
 void APlayerCharacter::Tick(float DeltaTime){
@@ -47,9 +50,10 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		if (IA_PlayerMove) EnhancedInputComponent->BindAction(IA_PlayerMove, ETriggerEvent::Triggered, this, &APlayerCharacter::MovementHandler);
 		if (IA_PlayerLook) EnhancedInputComponent->BindAction(IA_PlayerLook, ETriggerEvent::Triggered, this, &APlayerCharacter::LookHandler);
 		if (IA_PlayerJump) EnhancedInputComponent->BindAction(IA_PlayerJump, ETriggerEvent::Started, this, &APlayerCharacter::JumpHandler);
-		if (IA_PlayerInteract) EnhancedInputComponent->BindAction(IA_PlayerInteract, ETriggerEvent::Triggered, this, &APlayerCharacter::InteractHandler);
-		if (IA_PlayerPrimaryAction) EnhancedInputComponent->BindAction(IA_PlayerPrimaryAction, ETriggerEvent::Triggered, this, &APlayerCharacter::PrimaryActionHandler);
-		if (IA_PlayerSecondaryAction) EnhancedInputComponent->BindAction(IA_PlayerSecondaryAction, ETriggerEvent::Triggered, this, &APlayerCharacter::SecondaryActionHandler);
+		if (IA_PlayerSprint) EnhancedInputComponent->BindAction(IA_PlayerSprint, ETriggerEvent::Started, this, &APlayerCharacter::StartSprintHandler);
+		if (IA_PlayerInteract) EnhancedInputComponent->BindAction(IA_PlayerInteract, ETriggerEvent::Started, this, &APlayerCharacter::InteractHandler);
+		if (IA_PlayerPrimaryAction) EnhancedInputComponent->BindAction(IA_PlayerPrimaryAction, ETriggerEvent::Started, this, &APlayerCharacter::PrimaryActionHandler);
+		if (IA_PlayerSecondaryAction) EnhancedInputComponent->BindAction(IA_PlayerSecondaryAction, ETriggerEvent::Started, this, &APlayerCharacter::SecondaryActionHandler);
 		
 		
 		if (IMC_Player) {
@@ -79,6 +83,11 @@ void APlayerCharacter::LookHandler(const FInputActionValue& InputActionValue){
 }
 
 void APlayerCharacter::JumpHandler(const FInputActionValue& InputActionValue){
+	
+}
+
+void APlayerCharacter::StartSprintHandler(){
+	GetAbilityComponent()->TryUseAbility(FGameplayTag::RequestGameplayTag("Abilities.Movement.Sprint"), this);
 
 }
 
@@ -87,9 +96,6 @@ void APlayerCharacter::InteractHandler(){
 }
 
 void APlayerCharacter::PrimaryActionHandler(){
-	if (!CurrentAbility && !GetAbilityComponent()->GrantedAbilities.IsEmpty())
-		CurrentAbility = GetAbilityComponent()->GrantedAbilities[0];
-	
 	if (!CurrentAbility) return;
 	
 	GetAbilityComponent()->TryUseAbility(CurrentAbility->AbilityTag, this);
@@ -105,10 +111,16 @@ void APlayerCharacter::SecondaryActionHandler(){
 	const int32 Index = Granted.Find(CurrentAbility);
 
 	if (Index == INDEX_NONE){
-		CurrentAbility = Granted[0];
+		SetCurrentAbility(Granted[0]);
 		return;
 	}
 
-	CurrentAbility = Granted[(Index + 1) % Granted.Num()];
-	
+	SetCurrentAbility(Granted[(Index + 1) % Granted.Num()]);
+}
+
+void APlayerCharacter::SetCurrentAbility(UAbilityDefinition* NewAbility){
+	if (NewAbility && NewAbility != CurrentAbility){
+		CurrentAbility = NewAbility;
+		OnAbilityChanged.Broadcast(CurrentAbility->AbilityTag);
+	}
 }

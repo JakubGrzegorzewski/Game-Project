@@ -15,7 +15,7 @@ void UStatsComponent::BeginPlay(){
 
 	for (TPair<FGameplayTag, FStatsStruct>& Pair : Stats)
 	{
-		Pair.Value.CurrentValue = Pair.Value.DefaultValue;
+		UpdateStat(Pair.Key, Pair.Value.DefaultValue);
 	}
 }
 
@@ -57,6 +57,16 @@ float UStatsComponent::GetStatValue(const FGameplayTag StatTag) const{
 	return 0.0f;
 
 }
+
+void UStatsComponent::GetStatByTag(FGameplayTag StatTag, FStatsStruct& OutStat) const{
+	
+	if (StatTag.IsValid() && Stats.Contains(StatTag)) {
+		OutStat = Stats[StatTag];
+	} else {
+		UE_LOG(LogTemp, Warning, TEXT("StatTag is invalid or not found in Stats."));
+	}
+}
+
 bool UStatsComponent::AddNewStat(const FGameplayTag StatTag, FStatsStruct NewStat){
 	if (StatTag.IsValid() && !Stats.Contains(StatTag)) {
 		NewStat.CurrentValue = NewStat.DefaultValue;
