@@ -12,6 +12,7 @@ ARingWithEffect::ARingWithEffect(){
 	PrimaryActorTick.bCanEverTick = false;
 	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
 	SphereComponent->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
+	SphereComponent->SetGenerateOverlapEvents(true);
 	RootComponent = SphereComponent;
 }
 
@@ -21,8 +22,9 @@ void ARingWithEffect::BeginPlay(){
 	FTimerHandle LifeTimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(LifeTimerHandle, this, &ARingWithEffect::DestroyRing, LifeTime, false);
 
-	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &ARingWithEffect::OnOverlapBegin);
 	SphereComponent->SetSphereRadius(Radius);
+	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &ARingWithEffect::OnOverlapBegin);
+	SphereComponent->UpdateOverlaps();
 
 	if (NiagaraSystemAsset){
 		UNiagaraComponent* NiagaraComp = UNiagaraFunctionLibrary::SpawnSystemAttached(
