@@ -14,9 +14,10 @@ AProjectileWithEffect::AProjectileWithEffect(){
 	PrimaryActorTick.bCanEverTick = false;
 
 	CollisionComponent = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionComponent"));
-	CollisionComponent->SetSphereRadius(15.f);
+	CollisionComponent->SetSphereRadius(50.f);
 	CollisionComponent->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
 	CollisionComponent->SetNotifyRigidBodyCollision(true);
+	CollisionComponent->SetGenerateOverlapEvents(true);
 	RootComponent = CollisionComponent;
 
 	MovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("MovementComponent"));
@@ -39,18 +40,19 @@ void AProjectileWithEffect::BeginPlay(){
 	}
 	
 	if (NiagaraSystemAsset){
-		UNiagaraComponent* NiagaraComp = UNiagaraFunctionLibrary::SpawnSystemAttached(NiagaraSystemAsset, RootComponent, NAME_None, FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset, true);
+		UNiagaraComponent* NiagaraComp = UNiagaraFunctionLibrary::SpawnSystemAttached(NiagaraSystemAsset, RootComponent, NAME_None, FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::KeepWorldPosition, true);
 		if (NiagaraComp){
 			NiagaraComp->SetAutoDestroy(true);
 		}
 	}
 
-	CollisionComponent->OnComponentHit.AddDynamic(this, &AProjectileWithEffect::OnHit);
+	CollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &AProjectileWithEffect::OnOverlapBegin);
 	GetWorld()->GetTimerManager().SetTimer(DistanceCheckTimerHandle, this, &AProjectileWithEffect::CheckDistance, 0.05f, true);
 
 }
 
-void AProjectileWithEffect::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit){
+void AProjectileWithEffect::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult){
 	if (!OtherActor || OtherActor == this || OtherActor == GetOwner())
 		return;
 

@@ -211,12 +211,12 @@ bool UAbilityComponent::ResolveTarget(const UAbilityDefinition* Definition, AAct
 		const bool bHit = GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_WorldStatic, Params);
 		OutLocation = (bHit && Hit.bBlockingHit) ? Hit.Location : End;
 		OutTarget = nullptr;
-		return true;
+		return bHit;
 	}
 
 	case EAbilityTargetType::Projectile:
 		OutTarget = nullptr;
-		OutLocation = GetActorLocation(Owner) + GetForwardActorVector(Owner) * 100.f;
+		OutLocation = GetActorLocation(Owner) + GetForwardActorVector(Owner) * 500.f;
 		return true;
 	}
 

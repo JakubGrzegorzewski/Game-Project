@@ -22,8 +22,8 @@ void ARingWithEffect::BeginPlay(){
 	FTimerHandle LifeTimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(LifeTimerHandle, this, &ARingWithEffect::DestroyRing, LifeTime, false);
 
-	SphereComponent->SetSphereRadius(Radius);
 	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &ARingWithEffect::OnOverlapBegin);
+	SphereComponent->SetSphereRadius(Radius);
 	SphereComponent->UpdateOverlaps();
 
 	if (NiagaraSystemAsset){

@@ -1,7 +1,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/WidgetComponent.h"
 #include "GameFramework/Character.h"
+#include "UI/BaseTopBarWidget.h"
 #include "BaseCharacter.generated.h"
 
 class UStatsComponent;
@@ -28,6 +30,13 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UStatusEffectComponent* StatusEffectComponent;
 	UStatusEffectComponent* GetStatusEffectComponent() const { return StatusEffectComponent; }
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
+	UWidgetComponent* TopBarWidgetComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
+	TSubclassOf<UBaseTopBarWidget> TopBarWidgetClass;
+	
 
 protected:
 	virtual void BeginPlay() override;
