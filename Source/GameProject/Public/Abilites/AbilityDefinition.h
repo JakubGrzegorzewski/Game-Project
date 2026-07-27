@@ -9,6 +9,9 @@
 #include "Structs/StatusEffectSpec.h"
 #include "AbilityDefinition.generated.h"
 
+class ARingWithEffect;
+class AProjectileWithEffect;
+
 
 UCLASS(BlueprintType)
 class GAMEPROJECT_API UAbilityDefinition : public UDataAsset
@@ -42,6 +45,12 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability", meta = (EditCondition = "TargetType == EAbilityTargetType::AreaAtLocation"))
 	float AreaLifeTime = 5.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability", meta = (EditCondition = "TargetType == EAbilityTargetType::AreaAtLocation"))
+	TSubclassOf<ARingWithEffect> RingClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability", meta = (EditCondition = "TargetType == EAbilityTargetType::Projectile"))
+	TSubclassOf<AProjectileWithEffect> ProjectileClass;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Effects")
 	TArray<FStatusEffectSpec> Effects;
