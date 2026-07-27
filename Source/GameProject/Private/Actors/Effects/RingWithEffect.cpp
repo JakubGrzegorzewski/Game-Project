@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Actors/RingWithEffect.h"
+#include "Actors/Effects/RingWithEffect.h"
 
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
@@ -36,8 +36,7 @@ void ARingWithEffect::BeginPlay(){
 		);
 
 		if (NiagaraComp){
-			NiagaraComp->SetFloatParameter(FName("User.InnerSize"), Radius / 2.f);
-			NiagaraComp->SetFloatParameter(FName("User.OuterSize"), Radius);
+			NiagaraComp->SetFloatParameter(FName("User.Scale_All"), Radius / 300.f);
 		}
 	}
 }
