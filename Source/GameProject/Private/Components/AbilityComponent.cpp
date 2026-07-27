@@ -3,13 +3,16 @@
 
 #include "Components/AbilityComponent.h"
 
-#include "Actors/RingWithEffect.h"
+#include "Actors/Effects/ProjectileWithEffect.h"
+#include "Actors/Effects/RingWithEffect.h"
 #include "Characters/BaseCharacter.h"
 #include "Components/StatsComponent.h"
 #include "Components/StatusEffectComponent.h"
 #include "Engine/World.h"
 #include "Subsystems/AbilitesSubsystem.h"
 #include "TimerManager.h"
+#include "Camera/CameraComponent.h"
+#include "Characters/PlayerCharacter.h"
 #include "Enums/AbilityTargetType.h"
 #include "Structs/StatusEffectSpec.h"
 
@@ -101,7 +104,7 @@ bool UAbilityComponent::TryUseAbility(FGameplayTag AbilityTag, AActor* OptionalT
 
 	if (Definition->Cost.StatTag.IsValid()){
 		if (UStatsComponent* Stats = Owner->GetStatsComponent()){
-			Stats->UpdateStat(Definition->Cost.StatTag, -Definition->Cost.Amount);
+			Stats->ModifyStat(Definition->Cost.StatTag, -Definition->Cost.Amount);
 		}
 	}
 
@@ -123,8 +126,9 @@ bool UAbilityComponent::TryUseAbility(FGameplayTag AbilityTag, AActor* OptionalT
 	case EAbilityTargetType::AreaAtLocation:
 	{
 		if (UWorld* World = GetWorld()){
+			const TSubclassOf<ARingWithEffect> ClassToSpawn = Definition->RingClass ? Definition->RingClass : TSubclassOf<ARingWithEffect>(ARingWithEffect::StaticClass());
 			ARingWithEffect* Ring = World->SpawnActorDeferred<ARingWithEffect>(
-				ARingWithEffect::StaticClass(),
+				ClassToSpawn,
 				FTransform(FRotator::ZeroRotator, ResolvedLocation),
 				Owner, nullptr,
 				ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
@@ -134,6 +138,29 @@ bool UAbilityComponent::TryUseAbility(FGameplayTag AbilityTag, AActor* OptionalT
 				Ring->LifeTime = Definition->AreaLifeTime;
 				Ring->Effects = Definition->Effects;
 				Ring->FinishSpawning(FTransform(FRotator::ZeroRotator, ResolvedLocation));
+			}
+		}
+		break;
+	}
+	case EAbilityTargetType::Projectile:
+	{
+		if (UWorld* World = GetWorld()){
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.Owner = Owner;
+			SpawnParams.Instigator = Owner;
+			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+			const TSubclassOf<AProjectileWithEffect> ClassToSpawn = Definition->ProjectileClass ? Definition->ProjectileClass : TSubclassOf<AProjectileWithEffect>(AProjectileWithEffect::StaticClass());
+			AProjectileWithEffect* Projectile = World->SpawnActorDeferred<AProjectileWithEffect>(
+				ClassToSpawn,
+				FTransform(FRotationMatrix::MakeFromX(GetForwardActorVector(Owner)).Rotator(), ResolvedLocation),
+				Owner, nullptr,
+				ESpawnActorCollisionHandlingMethod::AlwaysSpawn
+				);
+			if (Projectile){
+				Projectile->Effects = Definition->Effects;
+				Projectile->MaxDistance = Definition->Range;
+				Projectile->FinishSpawning(FTransform(FRotationMatrix::MakeFromX(GetForwardActorVector(Owner)).Rotator(), ResolvedLocation));
 			}
 		}
 		break;
@@ -150,22 +177,22 @@ bool UAbilityComponent::ResolveTarget(const UAbilityDefinition* Definition, AAct
 	switch (Definition->TargetType){
 	case EAbilityTargetType::Self:
 		OutTarget = Owner;
-		OutLocation = Owner->GetActorLocation();
+		OutLocation = GetActorLocation(Owner);
 		return true;
 
 	case EAbilityTargetType::ActorTarget:
 	{
 		if (OptionalTarget && IsValid(OptionalTarget)){
 			OutTarget = OptionalTarget;
-			OutLocation = OptionalTarget->GetActorLocation();
+			OutLocation = GetActorLocation(OptionalTarget);
 			return true;
 		}
 
 		FHitResult Hit;
 		FCollisionQueryParams Params;
 		Params.AddIgnoredActor(Owner);
-		const FVector Start = Owner->GetActorLocation();
-		const FVector End = Start + Owner->GetActorForwardVector() * Definition->Range;
+		const FVector Start = GetActorLocation(Owner);
+		const FVector End = Start + GetForwardActorVector(Owner) * Definition->Range;
 		if (GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Pawn, Params) && Hit.bBlockingHit && IsValid(Hit.GetActor())){
 			OutTarget = Hit.GetActor();
 			OutLocation = Hit.Location;
@@ -179,13 +206,18 @@ bool UAbilityComponent::ResolveTarget(const UAbilityDefinition* Definition, AAct
 		FHitResult Hit;
 		FCollisionQueryParams Params;
 		Params.AddIgnoredActor(Owner);
-		const FVector Start = Owner->GetActorLocation();
-		const FVector End = Start + Owner->GetActorForwardVector() * Definition->Range;
+		const FVector Start = GetActorLocation(Owner);
+		const FVector End = Start + GetForwardActorVector(Owner) * Definition->Range;
 		const bool bHit = GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_WorldStatic, Params);
 		OutLocation = (bHit && Hit.bBlockingHit) ? Hit.Location : End;
 		OutTarget = nullptr;
 		return true;
 	}
+
+	case EAbilityTargetType::Projectile:
+		OutTarget = nullptr;
+		OutLocation = GetActorLocation(Owner) + GetForwardActorVector(Owner) * 100.f;
+		return true;
 	}
 
 	return false;
@@ -220,4 +252,26 @@ float UAbilityComponent::GetCooldownRemaining(FGameplayTag AbilityTag) const{
 		}
 	}
 	return 0.f;
+}
+
+FVector UAbilityComponent::GetForwardActorVector(const AActor* Actor){
+	FVector OutForwardVector;
+	if (const APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(Actor))
+	{
+		OutForwardVector = PlayerCharacter->CameraComponent->GetForwardVector();
+	} else if (Actor) {
+		OutForwardVector = Actor->GetActorForwardVector();
+	}
+	return OutForwardVector;
+}
+
+FVector UAbilityComponent::GetActorLocation(const AActor* Actor){
+	FVector OutLocation;
+	if (const APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(Actor))
+	{
+		OutLocation = PlayerCharacter->CameraComponent->GetComponentLocation();
+	} else if (Actor) {
+		OutLocation = Actor->GetActorLocation();
+	}
+	return OutLocation;
 }

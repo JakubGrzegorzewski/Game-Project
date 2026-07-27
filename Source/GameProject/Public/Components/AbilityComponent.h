@@ -52,6 +52,8 @@ private:
 	bool ResolveTarget(const UAbilityDefinition* Definition, AActor* OptionalTarget, AActor*& OutTarget, FVector& OutLocation) const;
 	void StartCooldown(const UAbilityDefinition* Definition);
 	void NotifyAbilityReady(FGameplayTag AbilityTag);
+	static FVector GetForwardActorVector(const AActor* Actor);
+	static FVector GetActorLocation(const AActor* Actor);
 
 	UPROPERTY()
 	TMap<FGameplayTag, FAbilityRuntimeState> RuntimeStates;
