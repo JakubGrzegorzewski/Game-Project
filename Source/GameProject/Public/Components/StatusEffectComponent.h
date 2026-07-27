@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "GameplayTagContainer.h"
 #include "Structs/AbilityStruct.h"
+#include "Structs/StatusEffectSpec.h"
 #include "StatusEffectComponent.generated.h"
 
 class UStatusEffect;
