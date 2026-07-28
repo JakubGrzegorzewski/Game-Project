@@ -18,9 +18,10 @@ Gracz steruje postacią z perspektywy trzeciej osoby, może sprintować, przeł�
 
 ### Uruchomienie
 
-1. Otwórz `GameProject.uproject`.
-2. W razie potrzeby potwierdź wygenerowanie plików projektu i kompilację modułów.
-3. Domyślnie zostanie załadowana mapa `Content/Maps/M_MainMap.umap`.
+1. Uruchom `GenerateProjectFiles.bat`, aby wygenerować pliki projektu Visual Studio – skrypt poprosi o podanie ścieżki do folderu instalacyjnego UE 5.6.
+2. Otwórz `GameProject.uproject`.
+3. W razie potrzeby potwierdź wygenerowanie plików projektu i kompilację modułów.
+4. Domyślnie zostanie załadowana mapa `Content/Maps/M_MainMap.umap`.
 
 ## Najważniejsze decyzje techniczne
 
