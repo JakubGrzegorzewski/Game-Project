@@ -15,8 +15,9 @@ ABaseCharacter::ABaseCharacter(){
 	
 	TopBarWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("TopBarWidgetComponent"));
 	TopBarWidgetComponent->SetupAttachment(GetRootComponent());
-	TopBarWidgetComponent->SetWidgetSpace(EWidgetSpace::World);
+	TopBarWidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
 	TopBarWidgetComponent->SetOwnerNoSee(true);
+	TopBarWidgetComponent->SetDrawAtDesiredSize(true);
 }
 
 void ABaseCharacter::BeginPlay(){
