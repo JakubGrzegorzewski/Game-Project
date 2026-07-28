@@ -40,7 +40,7 @@ void AProjectileWithEffect::BeginPlay(){
 	}
 	
 	if (NiagaraSystemAsset){
-		UNiagaraComponent* NiagaraComp = UNiagaraFunctionLibrary::SpawnSystemAttached(NiagaraSystemAsset, RootComponent, NAME_None, FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::KeepWorldPosition, true);
+		UNiagaraComponent* NiagaraComp = UNiagaraFunctionLibrary::SpawnSystemAttached(NiagaraSystemAsset, RootComponent, NAME_None, FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::SnapToTarget, true);
 		if (NiagaraComp){
 			NiagaraComp->SetAutoDestroy(true);
 		}

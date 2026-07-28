@@ -16,18 +16,25 @@ ABaseCharacter::ABaseCharacter(){
 	TopBarWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("TopBarWidgetComponent"));
 	TopBarWidgetComponent->SetupAttachment(GetRootComponent());
 	TopBarWidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
-	TopBarWidgetComponent->SetOwnerNoSee(true);
 	TopBarWidgetComponent->SetDrawAtDesiredSize(true);
 }
 
 void ABaseCharacter::BeginPlay(){
 	Super::BeginPlay();
 	
-	UBaseTopBarWidget* UserWidget = CreateWidget<UBaseTopBarWidget>( GetWorld(), TopBarWidgetClass);
-	if (UserWidget){
-		UserWidget->StatsComponent = StatsComponent;
-		TopBarWidgetComponent->SetWidget(UserWidget);
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	bool bIsLocalPlayer = (PlayerController && PlayerController->IsLocalPlayerController());
+    
+	if (!bIsLocalPlayer){
+		UBaseTopBarWidget* UserWidget = CreateWidget<UBaseTopBarWidget>(GetWorld(), TopBarWidgetClass);
+		if (UserWidget){
+			UserWidget->StatsComponent = StatsComponent;
+			TopBarWidgetComponent->SetWidget(UserWidget);
+		}
+	} else {
+		TopBarWidgetComponent->SetVisibility(false);
 	}
+	
 }
 
 

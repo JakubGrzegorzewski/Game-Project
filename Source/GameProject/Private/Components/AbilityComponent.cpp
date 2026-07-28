@@ -216,7 +216,7 @@ bool UAbilityComponent::ResolveTarget(const UAbilityDefinition* Definition, AAct
 
 	case EAbilityTargetType::Projectile:
 		OutTarget = nullptr;
-		OutLocation = GetActorLocation(Owner) + GetForwardActorVector(Owner) * 500.f;
+		OutLocation = GetActorLocation(Owner) + GetForwardActorVector(Owner) * 200.f;
 		return true;
 	}
 
