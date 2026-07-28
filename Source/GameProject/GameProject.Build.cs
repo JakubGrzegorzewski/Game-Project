@@ -21,7 +21,8 @@ public class GameProject : ModuleRules
 			"CommonUI",
 			"CommonInput",
 			"DeveloperSettings",
-			"Niagara"
+			"Niagara",
+			"OnlineSubsystem"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[]
