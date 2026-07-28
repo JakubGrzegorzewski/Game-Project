@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "GameplayTagContainer.h"
-#include "Structs/AbilityStruct.h"
+#include "Structs/AbilityCost.h"
 #include "Structs/StatusEffectSpec.h"
 #include "StatusEffectComponent.generated.h"
 

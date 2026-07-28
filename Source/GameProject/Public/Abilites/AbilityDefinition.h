@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
 #include "Enums/AbilityTargetType.h"
-#include "Structs/AbilityStruct.h"
+#include "Structs/AbilityCost.h"
 #include "Structs/StatusEffectSpec.h"
 #include "AbilityDefinition.generated.h"
 

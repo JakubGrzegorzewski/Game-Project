@@ -2,7 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
-#include "AbilityStruct.generated.h"
+#include "AbilityCost.generated.h"
 
 class UStatusEffect;
 
